@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JBC Progress Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --brass: #b5a642;
+    --brass-light: #d4c574;
+    --brass-dark: #8a7d32;
+    --ink: #1a1a1a;
+    --parchment: #faf8f3;
+    --warm-gray: #6b6560;
+    --success: #4a7c59;
+    --warning: #c4a35a;
+    --danger: #a65d57;
+    --info: #5a7a9c;
+    --soft-purple: #7a6fa8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--parchment);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--brass);
+  }
+
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--brass-dark);
+    margin-bottom: 4px;
+  }
+
+  .header .subtitle {
+    font-size: 0.9rem;
+    color: var(--warm-gray);
+    font-weight: 300;
+  }
+
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--brass), var(--brass-dark));
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 10px;
+    text-decoration: none;
+    transition: transform 0.2s;
+  }
+
+  .live-badge:hover { transform: scale(1.05); }
+  .live-badge .dot {
+    width: 8px; height: 8px;
+    background: #7fff7f;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tab-btn {
+    padding: 8px 18px;
+    border: 1.5px solid var(--brass);
+    background: transparent;
+    color: var(--brass-dark);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .tab-btn:hover { background: rgba(181, 166, 66, 0.1); }
+  .tab-btn.active {
+    background: var(--brass);
+    color: white;
+    border-color: var(--brass);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-left: 4px solid var(--brass);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .card-date {
+    font-size: 0.75rem;
+    color: var(--warm-gray);
+    background: var(--parchment);
+    padding: 2px 10px;
+    border-radius: 12px;
+  }
+
+  .card-mood {
+    font-size: 0.8rem;
+    color: var(--brass-dark);
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+
+  .card-list {
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--warm-gray);
+  }
+
+  .card-list li {
+    padding: 4px 0;
+    padding-left: 18px;
+    position: relative;
+  }
+
+  .card-list li::before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    color: var(--brass);
+    font-weight: bold;
+  }
+
+  .card-list li.done { text-decoration: line-through; opacity: 0.6; }
+  .card-list li.done::before { content: "✓"; color: var(--success); }
+
+  .status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .status-done { background: #e8f5e9; color: var(--success); }
+  .status-planned { background: #fff3e0; color: var(--warning); }
+  .status-vision { background: #e3f2fd; color: var(--info); }
+  .status-bug { background: #ffebee; color: var(--danger); }
+  .status-current { background: #ede7f6; color: var(--soft-purple); }
+
+  .progress-section {
+    margin-bottom: 24px;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .progress-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .progress-value {
+    font-size: 0.85rem;
+    color: var(--brass-dark);
+    font-weight: 600;
+  }
+
+  .progress-bar-bg {
+    height: 10px;
+    background: #e8e4dc;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.8s ease;
+  }
+
+  .fill-done { background: linear-gradient(90deg, var(--success), #6ab77a); }
+  .fill-planned { background: linear-gradient(90deg, var(--warning), #e8c97a); }
+  .fill-bug { background: linear-gradient(90deg, var(--danger), #c97a74); }
+  .fill-current { background: linear-gradient(90deg, var(--soft-purple), #9e94c7); }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: white;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .feature-item.done { opacity: 0.7; background: #f1f8e9; }
+
+  .feature-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .roadmap-version {
+    margin-bottom: 20px;
+  }
+
+  .version-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .version-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .needs-box {
+    background: #fff8e1;
+    border: 1px dashed var(--warning);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+  }
+
+  .needs-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--warning);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .people-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .person-card {
+    background: white;
+    padding: 16px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .person-avatar {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brass), var(--brass-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 auto 10px;
+  }
+
+  .person-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+
+  .person-role {
+    font-size: 0.8rem;
+    color: var(--warm-gray);
+  }
+
+  .concern-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .concern-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .concern-status {
+    font-size: 0.85rem;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--brass-dark);
+    margin: 24px 0 14px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e8e4dc;
+  }
+
+  .section-title:first-child { margin-top: 0; }
+
+  .stats-bar {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    background: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .changelog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+
+  .changelog-card {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  }
+
+  .changelog-version {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--brass-dark);
+    margin-bottom: 8px;
+  }
+
+  .changelog-list {
+    list-style: none;
+    font-size: 0.8rem;
+    color: var(--warm-gray);
+  }
+
+  .changelog-list li {
+    padding: 3px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .changelog-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--brass);
+  }
+
+  .changelog-list li.add::before { content: "+"; color: var(--success); font-weight: bold; }
+  .changelog-list li.fix::before { content: "🔧"; }
+  .changelog-list li.imp::before { content: "✨"; }
+  .changelog-list li.scrapped::before { content: "✗"; color: var(--danger); }
+
+  .note-box {
+    background: #e3f2fd;
+    border-left: 4px solid var(--info);
+    border-radius: 8px;
+    padding: 14px;
+    margin: 12px 0;
+    font-size: 0.85rem;
+    color: var(--warm-gray);
+  }
+
+  .note-box strong {
+    color: var(--info);
+  }
+
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.6rem; }
+    .card-header { flex-direction: column; gap: 6px; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .people-grid { grid-template-columns: 1fr; }
+    .changelog-grid { grid-template-columns: 1fr; }
+  }
+</style>
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>JessBoubie Craft</h1>
+    <div class="subtitle">Project Progress Map &mdash; The Big Picture</div>
+    <a href="https://jessboubiecraft.netlify.app/" target="_blank" class="live-badge">
+      <span class="dot"></span> Live at jessboubiecraft.netlify.app
+    </a>
+    <div class="stats-bar" style="margin-top: 14px;">
+      <div class="stat-pill"><span style="color: var(--success);">●</span> 34 Done</div>
+      <div class="stat-pill"><span style="color: var(--danger);">●</span> 0 Bugs</div>
+      <div class="stat-pill"><span style="color: var(--warning);">●</span> 0 UI Tweaks</div>
+      <div class="stat-pill"><span style="color: var(--info);">●</span> v3.0 LIVE</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('timeline')">📅 Timeline</button>
+    <button class="tab-btn" onclick="showTab('current')">🎯 Current State</button>
+    <button class="tab-btn" onclick="showTab('roadmap')">🗺️ Roadmap</button>
+    <button class="tab-btn" onclick="showTab('wins')">🏆 Wins & Team</button>
+    <button class="tab-btn" onclick="showTab('changelog')">📋 Changelog</button>
+  </div>
+
+  <!-- TIMELINE TAB -->
+  <div id="timeline" class="tab-panel active">
+    <div class="section-title">Your Journey So Far</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">💡 Concept Phase</div>
+          <div class="card-mood">Mood: Excited but nervous</div>
+        </div>
+        <span class="card-date">6/7/2026 ~8:34pm</span>
+      </div>
+      <ul class="card-list">
+        <li class="done">Mom proposes building a functional website for her brass crafts</li>
+        <li class="done">Concerns about website safety and server setup</li>
+        <li class="done">Researched feasibility with AI</li>
+        <li class="done">Decided to start simple: 2 sections (What we sell + Our history)</li>
+      </ul>
+      <div style="margin-top:10px"><span class="status-badge status-done">✅ Done</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">📝 v1.0 Design</div>
+          <div class="card-mood">Mood: Focused, breaking things down</div>
+        </div>
+        <span class="card-date">6/7/2026 ~9:00pm</span>
+      </div>
+      <ul class="card-list">
+        <li class="done">Sketched first version layout</li>
+        <li class="done">3 product columns (desktop), 1 at a time (mobile)</li>
+        <li class="done">About us + Lore + Contact section</li>
+        <li class="done">Identified future problems: sizing, mobile UX, server</li>
+      </ul>
+      <div style="margin-top:10px"><span class="status-badge status-done">✅ Done</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🚀 v1.0 → v1.2 LIVE</div>
+          <div class="card-mood">Mood: Proud, surprised at progress</div>
+        </div>
+        <span class="card-date">7/7/2026 ~8:42pm</span>
+      </div>
+      <ul class="card-list">
+        <li class="done">Website <strong>LIVE</strong> at jessboubiecraft.netlify.app</li>
+        <li class="done">Acknowledged it's "vibe coded" but <strong>functional</strong></li>
+        <li class="done">Thanked Fred and Ant for resources</li>
+        <li class="done">Planned v2 with 4 separate pages</li>
+      </ul>
+      <div style="margin-top:10px"><span class="status-badge status-done">✅ Done</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">✨ v1.2 Polish</div>
+          <div class="card-mood">Mood: Tired but accomplished</div>
+        </div>
+        <span class="card-date">7/7/2026 ~9:46pm</span>
+      </div>
+      <ul class="card-list">
+        <li class="done">Fonts changed to <strong>Cormorant Garamond</strong></li>
+        <li class="done">Categories: Bracelets & Rings with carousel</li>
+        <li class="done">Navigation shortcuts + Gallery section added</li>
+        <li class="done">Storytelling improved (inspired by Kadaiku)</li>
+        <li class="done">"Made by one artisan" → "Made by our family"</li>
+        <li class="done">Lightbox with close button + Dimmed background</li>
+      </ul>
+      <div style="margin-top:10px"><span class="status-badge status-done">✅ Done</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🔥 v2.0 — The Big Fix</div>
+          <div class="card-mood">Mood: Relieved, cleaner</div>
+        </div>
+        <span class="card-date">9/7/2026</span>
+      </div>
+      <ul class="card-list">
+        <li class="done">Mobile white rectangle bug <strong>FIXED</strong></li>
+        <li class="done">Removed ring template placeholders</li>
+        <li class="done">Added real featured wearer images</li>
+        <li class="done">Product cards thicker on mobile</li>
+        <li class="done">Parallax scroll restored on mobile</li>
+        <li class="done">"Work in progress" disclaimer added</li>
+        <li class="done">Version note added (v1.2 → now tracking v2.0)</li>
+        <li class="done">JBC_jess.jpg repositioned (face moved up)</li>
+      </ul>
+      <div style="margin-top:10px"><span class="status-badge status-done">✅ Done</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">🛠️ v2.1 — UI Polish</div>
+          <div class="card-mood">Mood: Detail-oriented, refining</div>
+        </div>
+        <span class="card-date">9/7/2026 ~12:56pm</span>
+      </div>
+      <ul class="card-list">
+        <li class="done">X button centering in lightbox <strong>FIXED</strong></li>
+        <li class="done">Logo bigger on mobile & laptop</li>
+        <li class="done">"Get in Touch" section redesigned</li>
+        <li class="done">Logo made clickable (opens lightbox / elegant zoom)</li>
+      </ul>
+      <div style="margin-top:10px"><span class="status-badge status-done">✅ Done</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">📖 v2.2 — Story Prep</div>
+          <div class="card-mood">Mood: Vision crystallizing</div>
+        </div>
+        <span class="card-date">9/7/2026</span>
+      </div>
+      <ul class="card-list">
+        <li class="done">Clarified vision for "Read Her Story" page</li>
+        <li class="done">Wrote detailed project brief for book-reading experience</li>
+        <li class="done">Defined 3-stage plan: Template → Typo-fix → Real Content</li>
+        <li class="done">Scoped out: Cover screen, 3D open animation, reading view, return nav</li>
+        <li class="done">Dark mode idea scrapped (too bright concern resolved differently)</li>
+      </ul>
+      <div style="margin-top:10px"><span class="status-badge status-done">✅ Done</span></div>
+    </div>
+
+    <div class="card" style="border-left-color: var(--soft-purple);">
+      <div class="card-header">
+        <div>
+          <div class="card-title">📚 v3.0 — "Read Her Story" LIVE</div>
+          <div class="card-mood">Mood: Proud, visionary, accomplished</div>
+        </div>
+        <span class="card-date">9/7/2026</span>
+      </div>
+      <ul class="card-list">
+        <li class="done">New page: <strong>story.html</strong> — "Luka yang Menyembuhkan Luka"</li>
+        <li class="done">Book-like reading design (inspired by Aeon)</li>
+        <li class="done">Click-to-open book animation with CSS 3D <code>perspective</code> + <code>rotateY</code></li>
+        <li class="done">Reading time indicator</li>
+        <li class="done">Hero image at top of story</li>
+        <li class="done">Story transcribed & typos fixed (via Claude)</li>
+        <li class="done">Original writer credited beautifully</li>
+        <li class="done"><code>prefers-reduced-motion</code> respected — skips animation</li>
+        <li class="done">Return navigation to main site</li>
+        <li class="done">TTS cancelled (free TTS poor quality; ElevenLabs $5 investment deferred)</li>
+        <li class="done">All 42 images organized & named</li>
+        <li class="done">Pictures with Belle Sisoski & Dabra Sia collected</li>
+        <li class="done">2 more ring designs added</li>
+        <li class="done">Mom's story text received and integrated</li>
+      </ul>
+      <div style="margin-top:10px"><span class="status-badge status-current">✅ CURRENT — v3.0</span></div>
+    </div>
+  </div>
+
+  <!-- CURRENT STATE TAB -->
+  <div id="current" class="tab-panel">
+    <div class="section-title">v3.0 — What's Working</div>
+    <div class="feature-grid">
+      <div class="feature-item done"><span class="feature-icon">🛍️</span> Product catalog (Bracelets + Rings)</div>
+      <div class="feature-item done"><span class="feature-icon">◀▶</span> Image carousel with arrows</div>
+      <div class="feature-item done"><span class="feature-icon">🔍</span> Lightbox with X close button (centered)</div>
+      <div class="feature-item done"><span class="feature-icon">🔗</span> Navigation shortcuts</div>
+      <div class="feature-item done"><span class="feature-icon">🖼️</span> Gallery section</div>
+      <div class="feature-item done"><span class="feature-icon">📖</span> Heartfelt storytelling</div>
+      <div class="feature-item done"><span class="feature-icon">📱</span> Responsive design (no more white space)</div>
+      <div class="feature-item done"><span class="feature-icon">✒️</span> Font: Cormorant Garamond</div>
+      <div class="feature-item done"><span class="feature-icon">🌅</span> Dimmed background + parallax</div>
+      <div class="feature-item done"><span class="feature-icon">📞</span> WhatsApp + Instagram contact</div>
+      <div class="feature-item done"><span class="feature-icon">👤</span> Featured wearers section (real images)</div>
+      <div class="feature-item done"><span class="feature-icon">⚠️</span> "Work in progress" disclaimer</div>
+      <div class="feature-item done"><span class="feature-icon">📐</span> Thicker product cards (mobile)</div>
+      <div class="feature-item done"><span class="feature-icon">🖼️</span> JBC_jess.jpg repositioned</div>
+      <div class="feature-item done"><span class="feature-icon">🔍</span> Bigger logo (mobile + laptop)</div>
+      <div class="feature-item done"><span class="feature-icon">🖱️</span> Clickable logo (lightbox zoom)</div>
+      <div class="feature-item done"><span class="feature-icon">📞</span> Redesigned "Get in Touch" section</div>
+      <div class="feature-item done"><span class="feature-icon">📚</span> <strong>NEW:</strong> "Read Her Story" book page</div>
+      <div class="feature-item done"><span class="feature-icon">📖</span> 3D book open animation</div>
+      <div class="feature-item done"><span class="feature-icon">⏱️</span> Reading time indicator</div>
+      <div class="feature-item done"><span class="feature-icon">♿</span> Reduced-motion accessibility</div>
+      <div class="feature-item done"><span class="feature-icon">🏷️</span> Original writer credited</div>
+    </div>
+
+    <div class="section-title">🐛 Active Bugs</div>
+    <div class="note-box">
+      <strong>Zero active bugs.</strong> All known issues from v2.0 have been resolved. The X button is centered, mobile layout is clean, and the logo scales properly across devices.
+    </div>
+
+    <div class="section-title">🔧 UI Improvements Needed</div>
+    <div class="note-box">
+      <strong>All v2.1 UI tweaks complete.</strong> Logo sizing, Get in Touch redesign, and clickable logo are all shipped. No pending UI tweaks.
+    </div>
+  </div>
+
+  <!-- ROADMAP TAB -->
+  <div id="roadmap" class="tab-panel">
+    <div class="roadmap-version">
+      <div class="version-header">
+        <span class="version-name" style="color: var(--success)">v3.0</span>
+        <span class="status-badge status-done">✅ SHIPPED</span>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-item done"><span class="feature-icon">📖</span> "Luka yang Menyembuhkan Luka" — Mom's story page</div>
+        <div class="feature-item done"><span class="feature-icon">📚</span> Book-like reading design (inspired by Aeon)</div>
+        <div class="feature-item done"><span class="feature-icon">⏱️</span> Approximate reading time indicator</div>
+        <div class="feature-item done"><span class="feature-icon">🖼️</span> Hero image at top of story</div>
+        <div class="feature-item done"><span class="feature-icon">✍️</span> Transcribe & fix typos</div>
+        <div class="feature-item done"><span class="feature-icon">🏷️</span> Original writer credited beautifully</div>
+        <div class="feature-item done"><span class="feature-icon">♿</span> prefers-reduced-motion support</div>
+      </div>
+    </div>
+
+    <div class="roadmap-version">
+      <div class="version-header">
+        <span class="version-name" style="color: var(--warning)">v3.1</span>
+        <span class="status-badge status-planned">Next Up</span>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-item"><span class="feature-icon">🖼️</span> Add appropriate pictures throughout the autobiography page</div>
+        <div class="feature-item"><span class="feature-icon">🔧</span> Typo-fix pass on story page (post-template cleanup)</div>
+      </div>
+    </div>
+
+    <div class="roadmap-version">
+      <div class="version-header">
+        <span class="version-name" style="color: var(--info)">v3.5</span>
+        <span class="status-badge status-vision">Consideration</span>
+      </div>
+      <div class="note-box" style="margin-bottom: 10px;">
+        <strong>Note:</strong> These are <em>considerations</em>, not must-dos. The current single-page design is working well. Only pursue if content loading becomes sluggish or cluttered.
+      </div>
+      <div class="feature-grid">
+        <div class="feature-item"><span class="feature-icon">🏠</span> 4 separate pages (Home, Product, Gallery, About) — <em>only if needed</em></div>
+        <div class="feature-item"><span class="feature-icon">👤</span> Homepage model section</div>
+        <div class="feature-item"><span class="feature-icon">🛍️</span> Full product categorization by tribe theme (Dusun Liwan / Dusun Tobilung)</div>
+        <div class="feature-item"><span class="feature-icon">📁</span> Proper file structure (assets/css/js/pages)</div>
+      </div>
+    </div>
+
+    <div class="roadmap-version">
+      <div class="version-header">
+        <span class="version-name" style="color: var(--warm-gray)">v4.0</span>
+        <span class="status-badge status-vision">Far Future</span>
+      </div>
+      <div class="note-box" style="margin-bottom: 10px;">
+        <strong>Note:</strong> These are advanced optimizations. Evaluate if they meaningfully improve the site for your users before investing time.
+      </div>
+      <div class="feature-grid">
+        <div class="feature-item"><span class="feature-icon">🔧</span> Build step (Vite/Parcel) — <em>speeds up development, bundles assets</em></div>
+        <div class="feature-item"><span class="feature-icon">🖼️</span> srcset responsive images — <em>serves smaller images to mobile</em></div>
+        <div class="feature-item"><span class="feature-icon">🔒</span> noopener noreferrer security — <em>prevents tabnabbing on external links</em></div>
+        <div class="feature-item"><span class="feature-icon">🗺️</span> sitemap.xml for SEO — <em>helps search engines index pages</em></div>
+        <div class="feature-item"><span class="feature-icon">🤖</span> AI research agent — <em>vague idea, needs scoping</em></div>
+        <div class="feature-item"><span class="feature-icon">🔊</span> TTS for story page — <em>deferred; requires ElevenLabs investment ($5)</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WINS TAB -->
+  <div id="wins" class="tab-panel">
+    <div class="section-title">🏆 Learning Wins</div>
+    <div class="feature-grid">
+      <div class="feature-item"><span class="feature-icon">🚀</span> Netlify deployment</div>
+      <div class="feature-item"><span class="feature-icon">🐙</span> GitHub as backup</div>
+      <div class="feature-item"><span class="feature-icon">◀▶</span> Carousel implementation</div>
+      <div class="feature-item"><span class="feature-icon">🔍</span> Lightbox/modal patterns</div>
+      <div class="feature-item"><span class="feature-icon">✒️</span> Google Fonts API loading</div>
+      <div class="feature-item"><span class="feature-icon">📱</span> Responsive design + mobile debugging</div>
+      <div class="feature-item"><span class="feature-icon">🧩</span> Breaking tasks into chunks</div>
+      <div class="feature-item"><span class="feature-icon">🌊</span> Parallax scroll effects</div>
+      <div class="feature-item"><span class="feature-icon">🎨</span> Dimmed background overlays</div>
+      <div class="feature-item"><span class="feature-icon">🐛</span> Debugging mobile layout issues</div>
+      <div class="feature-item"><span class="feature-icon">📝</span> Storytelling for brand voice</div>
+      <div class="feature-item"><span class="feature-icon">⚡</span> v1.0 → v3.0 rapid iteration</div>
+      <div class="feature-item"><span class="feature-icon">📐</span> CSS 3D transforms (perspective, rotateY)</div>
+      <div class="feature-item"><span class="feature-icon">♿</span> Accessibility: prefers-reduced-motion</div>
+      <div class="feature-item"><span class="feature-icon">📚</span> Book-like UI design patterns</div>
+      <div class="feature-item"><span class="feature-icon">🎯</span> Writing detailed project briefs</div>
+      <div class="feature-item"><span class="feature-icon">🔁</span> Git push workflow (v1 → v2 → v3)</div>
+    </div>
+
+    <div class="section-title">👥 Your Support Team</div>
+    <div class="people-grid">
+      <div class="person-card">
+        <div class="person-avatar">F</div>
+        <div class="person-name">Fred</div>
+        <div class="person-role">Moral support, mini-project mindset, roadmap ideas</div>
+      </div>
+      <div class="person-card">
+        <div class="person-avatar">A</div>
+        <div class="person-name">Ant (Anthonny)</div>
+        <div class="person-role">Technical guidance, UI/UX, server knowledge</div>
+      </div>
+      <div class="person-card">
+        <div class="person-avatar">M</div>
+        <div class="person-name">Mom</div>
+        <div class="person-role">Content provider, artisan, business owner, storyteller</div>
+      </div>
+      <div class="person-card">
+        <div class="person-avatar">AI</div>
+        <div class="person-name">Claude / Kimi</div>
+        <div class="person-role">Transcription, code generation, debugging partner</div>
+      </div>
+    </div>
+
+    <div class="section-title">✅ Concerns Resolved</div>
+    <div class="concern-row">
+      <span class="concern-label">🖥️ Server setup</span>
+      <span class="concern-status" style="color: var(--success)">✅ Netlify free tier — no laptop needed 24/7</span>
+    </div>
+    <div class="concern-row">
+      <span class="concern-label">📱 Mobile layout broken</span>
+      <span class="concern-status" style="color: var(--success)">✅ FIXED — no more white rectangle</span>
+    </div>
+    <div class="concern-row">
+      <span class="concern-label">💰 Cost</span>
+      <span class="concern-status" style="color: var(--success)">✅ Free for now</span>
+    </div>
+    <div class="concern-row">
+      <span class="concern-label">🤔 Is this even possible?</span>
+      <span class="concern-status" style="color: var(--success); font-weight: 700">✅ YES — YOU BUILT IT!</span>
+    </div>
+    <div class="concern-row">
+      <span class="concern-label">🔄 Can I iterate fast?</span>
+      <span class="concern-status" style="color: var(--success)">✅ v1.0 → v3.0 in 3 days</span>
+    </div>
+    <div class="concern-row">
+      <span class="concern-label">📖 Can I tell Mom's story beautifully?</span>
+      <span class="concern-status" style="color: var(--success); font-weight: 700">✅ YES — "Read Her Story" is LIVE</span>
+    </div>
+  </div>
+
+  <!-- CHANGELOG TAB -->
+  <div id="changelog" class="tab-panel">
+    <div class="section-title">📋 Detailed Changelog</div>
+
+    <div class="changelog-grid">
+      <div class="changelog-card">
+        <div class="changelog-version">v3.0 — "Read Her Story"</div>
+        <ul class="changelog-list">
+          <li class="add">New page: story.html with book-reading experience</li>
+          <li class="add">3D book open animation (CSS perspective + rotateY)</li>
+          <li class="add">Reading time indicator</li>
+          <li class="add">Hero image at top of story</li>
+          <li class="add">Return navigation to homepage</li>
+          <li class="add">Original writer credit section</li>
+          <li class="imp">Story transcribed and typo-fixed</li>
+          <li class="imp">Respects prefers-reduced-motion</li>
+          <li class="scrapped">TTS deferred (quality/cost)</li>
+          <li class="scrapped">Dark mode deferred</li>
+        </ul>
+      </div>
+
+      <div class="changelog-card">
+        <div class="changelog-version">v2.1 — UI Polish</div>
+        <ul class="changelog-list">
+          <li class="fix">X button centering in lightbox</li>
+          <li class="imp">Bigger logo on mobile & laptop</li>
+          <li class="imp">Redesigned "Get in Touch" section</li>
+          <li class="add">Clickable logo (lightbox zoom)</li>
+        </ul>
+      </div>
+
+      <div class="changelog-card">
+        <div class="changelog-version">v2.0 — The Big Fix</div>
+        <ul class="changelog-list">
+          <li class="fix">Fixed mobile white rectangle bug</li>
+          <li class="fix">Removed ring template placeholders</li>
+          <li class="add">Added real featured wearer images</li>
+          <li class="imp">Thicker product cards on mobile</li>
+          <li class="fix">Restored parallax scroll on mobile</li>
+          <li class="add">Added "Work in Progress" disclaimer</li>
+          <li class="add">Added version tracking note</li>
+          <li class="imp">Repositioned JBC_jess.jpg (face up)</li>
+        </ul>
+      </div>
+
+      <div class="changelog-card">
+        <div class="changelog-version">v1.2 — Polish</div>
+        <ul class="changelog-list">
+          <li class="imp">Font: Cormorant Garamond</li>
+          <li class="add">Categories: Bracelets & Rings</li>
+          <li class="add">Image carousel with arrows</li>
+          <li class="add">Navigation shortcuts</li>
+          <li class="add">Gallery section</li>
+          <li class="imp">Heartfelt storytelling (Kadaiku-inspired)</li>
+          <li class="imp">"Made by one artisan" → "Made by us"</li>
+          <li class="add">Lightbox with X close button</li>
+          <li class="add">Dimmed background overlay</li>
+        </ul>
+      </div>
+
+      <div class="changelog-card">
+        <div class="changelog-version">v1.0 — First Live</div>
+        <ul class="changelog-list">
+          <li class="add">Website LIVE on Netlify</li>
+          <li class="add">3 product columns (desktop)</li>
+          <li class="add">About us + Lore + Contact</li>
+          <li class="add">Responsive basics</li>
+          <li class="add">WhatsApp + Instagram links</li>
+        </ul>
+      </div>
+
+      <div class="changelog-card">
+        <div class="changelog-version">v3.1 (Planned)</div>
+        <ul class="changelog-list">
+          <li class="add">Add pictures throughout autobiography</li>
+          <li class="fix">Typo-fix pass on story page</li>
+        </ul>
+      </div>
+
+      <div class="changelog-card">
+        <div class="changelog-version">v3.5+ (Consideration)</div>
+        <ul class="changelog-list">
+          <li class="add">4 separate pages (if needed)</li>
+          <li class="add">Tribe-based categorization</li>
+          <li class="add">Proper file structure</li>
+        </ul>
+      </div>
+
+      <div class="changelog-card">
+        <div class="changelog-version">v4.0 (Far Future)</div>
+        <ul class="changelog-list">
+          <li class="add">Build system (Vite/Parcel)</li>
+          <li class="add">srcset responsive images</li>
+          <li class="add">noopener noreferrer</li>
+          <li class="add">sitemap.xml</li>
+          <li class="add">AI research agent</li>
+          <li class="add">TTS (if invested)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(tabId) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
