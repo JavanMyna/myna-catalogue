@@ -354,6 +354,21 @@ section { scroll-margin-top: 4rem; } /* clear the sticky nav on hash jump */
     font-style: italic;
     font-family: 'Segoe UI', system-ui, sans-serif;
 }
+/* "JavanMyna" byline as a discoverable link to SoundCloud (Task 5).
+   Keeps the existing bold look; underline + accent colour appear on hover. */
+.javanmyna-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.javanmyna-link:hover,
+.javanmyna-link:focus-visible {
+    color: var(--accent-music);
+    border-bottom-color: var(--accent-music);
+    outline: none;
+}
+.javanmyna-link:focus-visible { outline: 2px solid var(--fa-text); outline-offset: 2px; }
 .track-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
 .track {
     background: var(--fa-surface);
@@ -576,4 +591,25 @@ section { scroll-margin-top: 4rem; } /* clear the sticky nav on hash jump */
 @media (min-width: 960px) {
     :root { --fa-cards-per-view: 3; }
     .fa-slider-btn { width: 3rem; height: 3rem; }
+}
+
+/* --------------------------------------------------- */
+/* 14. MOBILE-ONLY SPACING (Task 7)                     */
+/* Adds breathing room between an item's title and its  */
+/* subtitle/meta on small screens only. Applied to all */
+/* repeating title+subtitle patterns: art placards,     */
+/* photography placards, music track rows, and project  */
+/* cards. Desktop spacing above is left untouched.      */
+/* --------------------------------------------------- */
+@media (max-width: 639px) {
+    .fa-card-body { padding: 0.8rem 1rem 1.15rem; }
+    .fa-card-body h3 { line-height: 1.4; }
+    .fa-card-meta { margin-top: 0.5rem; line-height: 1.5; }
+
+    .track-info { gap: 0.45rem; }
+    .track-title { line-height: 1.4; }
+    .track-meta { line-height: 1.5; }
+
+    .project-card h3 { line-height: 1.4; }
+    .project-type { line-height: 1.45; margin-top: 0.45rem; }
 }

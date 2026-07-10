@@ -42,11 +42,7 @@
                 <h2 class="section-title">About me</h2>
                 <div class="about-block">
                     <div class="about-photo">
-                        <!-- TODO: drop a real portrait at assets/art/bio.jpg — none exists yet.
-                             The <img> will fail silently and the placeholder div shows instead. -->
-                        <img src="assets/art/bio.jpg" alt="Photo of Fred" class="bio-photo"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="bio-photo-placeholder" aria-hidden="true">[ TODO: bio photo ]</div>
+                        <img src="assets/photography/people/fred01.jpg" alt="Photo of Fred" class="bio-photo">
                     </div>
                     <div class="about-text">
                         <p>Hi, I'm Fred, I make things.</p>
@@ -72,20 +68,7 @@
 
                         <div class="fa-slider-viewport">
                             <div class="fa-track">
-                                <article class="fa-card fa-trigger" tabindex="0"
-                                         data-title="Antformicidae"
-                                         data-medium="Digital drawing"
-                                         data-date="2024"
-                                         data-desc="An ant-inspired creature study.">
-                                    <img src="assets/art/antformicidae.jpg"
-                                         alt="Antformicidae — ant-inspired creature illustration"
-                                         loading="lazy">
-                                    <div class="fa-card-body">
-                                        <h3>Antformicidae</h3>
-                                        <p class="fa-card-meta">Digital drawing · 2024</p>
-                                    </div>
-                                </article>
-                                <!-- TODO: add more artwork cards under assets/art/ as you make them. -->
+                                <!-- Art cards are rendered from script.js (artData). -->
                             </div>
                         </div>
 
@@ -112,41 +95,7 @@
 
                         <div class="fa-slider-viewport">
                             <div class="fa-track">
-                                <article class="fa-card fa-trigger" tabindex="0"
-                                         data-title="Miko 01"
-                                         data-medium="Photograph"
-                                         data-date=""
-                                         data-desc="">
-                                    <img src="assets/photography/miko01.jpg" alt="Miko 01" loading="lazy">
-                                    <div class="fa-card-body">
-                                        <h3>Miko 01</h3>
-                                        <p class="fa-card-meta">Photograph</p>
-                                    </div>
-                                </article>
-
-                                <article class="fa-card fa-trigger" tabindex="0"
-                                         data-title="Miko 02"
-                                         data-medium="Photograph"
-                                         data-date=""
-                                         data-desc="">
-                                    <img src="assets/photography/miko02.jpg" alt="Miko 02" loading="lazy">
-                                    <div class="fa-card-body">
-                                        <h3>Miko 02</h3>
-                                        <p class="fa-card-meta">Photograph</p>
-                                    </div>
-                                </article>
-
-                                <article class="fa-card fa-trigger" tabindex="0"
-                                         data-title="MM"
-                                         data-medium="Photograph"
-                                         data-date=""
-                                         data-desc="">
-                                    <img src="assets/photography/mm.jpg" alt="MM" loading="lazy">
-                                    <div class="fa-card-body">
-                                        <h3>MM</h3>
-                                        <p class="fa-card-meta">Photograph</p>
-                                    </div>
-                                </article>
+                                <!-- Photography cards are rendered from script.js (photoData). -->
                             </div>
                         </div>
 
@@ -166,88 +115,11 @@
         <section id="music" class="section" data-section="music">
             <div class="container">
                 <h2 class="section-title">Music</h2>
-                <p class="section-lead">Original work under the name <strong>JavanMyna</strong>. Play a track below.</p>
+                <p class="section-lead">Original work under the name <a class="javanmyna-link" href="https://soundcloud.com/javanmyna" target="_blank" rel="noopener noreferrer"><strong>JavanMyna</strong></a>. Play a track below.</p>
 
-                <!-- TODO: the three groupings below are my best guess from filenames —
-                     please confirm which track belongs in which group, and confirm
-                     the collaborator / SFX credit names marked [TODO]. -->
-
-                <div class="music-group">
-                    <h3>Compositions <span class="group-note">(MuseScore)</span></h3>
-                    <ul class="track-list">
-                        <li class="track">
-                            <div class="track-info">
-                                <span class="track-title">P(Xr), nCrP^nQ^n-r, PQ1</span>
-                                <span class="track-meta">Composition</span>
-                            </div>
-                            <!-- Spaces and the caret in this filename are URL-encoded (%20, %5E).
-                                 If the player fails to load, the file may need renaming. -->
-                            <audio controls preload="none"
-                                   src="assets/music/P(Xr),%20nCrP%5EnQ%5En-r,%20PQ1.mp3"></audio>
-                        </li>
-                        <li class="track">
-                            <div class="track-info">
-                                <span class="track-title">Lifeline</span>
-                                <span class="track-meta">Composition</span>
-                            </div>
-                            <audio controls preload="none" src="assets/music/lifeline.mp3"></audio>
-                        </li>
-                        <li class="track">
-                            <div class="track-info">
-                                <span class="track-title">Manyafication</span>
-                                <span class="track-meta">Composition</span>
-                            </div>
-                            <audio controls preload="none" src="assets/music/manyafication.mp3"></audio>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="music-group">
-                    <h3>Beats &amp; production <span class="group-note">(FL Studio)</span></h3>
-                    <ul class="track-list">
-                        <li class="track">
-                            <div class="track-info">
-                                <span class="track-title">Dazed</span>
-                                <span class="track-meta">Beat</span>
-                            </div>
-                            <audio controls preload="none" src="assets/music/dazed.mp3"></audio>
-                        </li>
-                        <li class="track">
-                            <div class="track-info">
-                                <span class="track-title">Deadpool Bag 2</span>
-                                <span class="track-meta">Beat</span>
-                            </div>
-                            <audio controls preload="none" src="assets/music/deadpool_bag2.mp3"></audio>
-                        </li>
-                        <li class="track">
-                            <div class="track-info">
-                                <span class="track-title">D for Dustbin</span>
-                                <span class="track-meta">Beat</span>
-                            </div>
-                            <audio controls preload="none" src="assets/music/dfordustbin.mp3"></audio>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="music-group">
-                    <h3>Favorites, collabs &amp; SFX <span class="group-note">(lofi / credits)</span></h3>
-                    <ul class="track-list">
-                        <li class="track">
-                            <div class="track-info">
-                                <span class="track-title">Fy, IbnG</span>
-                                <span class="track-meta">[TODO: confirm credit — collaborator or lofi pick?]</span>
-                            </div>
-                            <audio controls preload="none" src="assets/music/Fy,IbnG.mp3"></audio>
-                        </li>
-                        <li class="track">
-                            <div class="track-info">
-                                <span class="track-title">L&amp;M</span>
-                                <span class="track-meta">[TODO: confirm credit — collaborator or SFX?]</span>
-                            </div>
-                            <audio controls preload="none" src="assets/music/l&amp;m.mp3"></audio>
-                        </li>
-                    </ul>
-                </div>
+                <!-- Music groups are rendered from script.js (musicGroups). All tracks
+                     are solely by JavanMyna, made via Jummbox/Beepbox. -->
+                <div class="music-groups"></div>
             </div>
         </section>
 
@@ -268,10 +140,11 @@
                              data-date=""
                              data-desc="A handcrafted-brass jewellery catalogue site for Jess Boubie Craft, built as a static site. This is the project whose carousel + lightbox pattern Fred's Archive adapts for its own galleries."
                              data-github="https://github.com/JavanMyna/jess-boubie-craft"
-                             data-live="https://jessboubiecraft.netlify.app/">
+                             data-live="https://jessboubiecraft.netlify.app/"
+                             data-progress="assets/projects/JBCv3.0_progress.html">
                         <h3>Jess Boubie Craft website</h3>
                         <p class="project-type">Static site · HTML / CSS / JS</p>
-                        <p class="project-links-hint">GitHub + live link</p>
+                        <p class="project-links-hint">GitHub + live + progress log</p>
                     </article>
 
                     <article class="project-card fa-trigger" tabindex="0"
@@ -306,7 +179,7 @@
     </main>
 
     <footer class="footer">
-        <p class="footer-version">Fred's Archive · V1 · in development</p>
+        <p class="footer-version">Fred's Archive · v1.1 · in development</p>
         <p class="footer-credit">Created by Fred</p>
     </footer>
 

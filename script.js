@@ -16,6 +16,151 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     /* ----------------------------------------------- */
+    /* DATA + RENDER                                     */
+    /* Art, photography, and music are built from JS    */
+    /* arrays so the slides stay in sync with the       */
+    /* assets folders. DOM classes are identical to the */
+    /* old hardcoded markup, so CSS/visuals are unchanged. */
+    /* ----------------------------------------------- */
+    const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+
+    // filename stem -> sensible human title (camelCase + underscores + trailing number aware).
+    function titleFromStem(stem) {
+        const m = stem.match(/^([^\d]*?)(\d+)$/);
+        let name = m ? m[1] : stem;
+        const num = m ? m[2] : '';
+        name = name
+            .replace(/_/g, ' ')
+            .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+            .split(' ')
+            .map(w => (w.length > 1 && w === w.toUpperCase()) ? w : w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ')
+            .trim();
+        return num ? `${name} ${num}` : name;
+    }
+
+    // cat-specific caption mapping (Task 3). mmt is checked before mm so mmt* is not swallowed.
+    function catTitle(stem) {
+        const s = stem.toLowerCase();
+        if (s.startsWith('mmt')) return 'Miko & Mita';
+        if (s.startsWith('mm'))  return 'Miko & Mango';
+        return titleFromStem(stem);
+    }
+
+    // Art work — explicit titles/medium. Antformicidae keeps its existing placard detail.
+    const artData = [
+        { f:'antformicidae.jpg', t:'Antformicidae', med:'Digital drawing', date:'2024', desc:'An ant-inspired creature study.' },
+        { f:'art_2024sukanDay.jpg', t:'2024 Sukan Day', med:'Digital drawing' },
+        { f:'art_classmate01.jpg', t:'Classmate 01', med:'Digital drawing' },
+        { f:'art_classmate02.jpg', t:'Classmate 02', med:'Digital drawing' },
+        { f:'art_kmlcat.jpg', t:'KML Cat', med:'Digital drawing' },
+        { f:'art_kmlPoster.jpg', t:'KML Poster', med:'Poster' },
+        { f:'art_miko.jpg', t:'Miko', med:'Digital drawing' },
+        { f:'art_perspectiveBed.jpg', t:'Perspective Bed', med:'Perspective drawing' },
+        { f:'art_perspectiveBedroom.jpg', t:'Perspective Bedroom', med:'Perspective drawing' },
+        { f:'art_perspectiveLivingroom.jpg', t:'Perspective Living Room', med:'Perspective drawing' },
+        { f:'art_pov01.jpg', t:'POV 01', med:'Digital drawing' },
+        { f:'art_ringo.jpg', t:'Ringo', med:'Digital drawing' },
+        { f:'art_rkgk01.jpg', t:'RKGK 01', med:'Sketch' },
+        { f:'art_rkgk02.jpg', t:'RKGK 02', med:'Sketch' },
+        { f:'art_rkgk03.jpg', t:'RKGK 03', med:'Sketch' },
+        { f:'art_rkgk04.jpg', t:'RKGK 04', med:'Sketch' },
+        { f:'comic_chineseHumor.jpg', t:'Chinese Humor', med:'Comic' },
+    ];
+
+    const catStems = [
+        'kml_cat01',
+        'mango01','mango02','mango03','mango04',
+        'miko01','miko02','miko03','miko04','miko05','miko06','miko07','miko08','miko09','miko10','miko11','miko12','miko13','miko14','miko15',
+        'mita01','mita02','mita03',
+        'mm01','mm02','mm03','mm04','mm05','mm06','mm07','mm08','mm09','mm10','mm11',
+        'mmt01','mmt02','mmt03','mmt04',
+    ];
+    const envStems = ['cloud01','cloud02','cloud03','cloud04','cloud05','doulosHope','IMG_20260710_083024','JBC_display','myGuitar','panda_miniature'];
+    // fred01.jpg is reserved for the bio photo (Task 6), so excluded from the gallery.
+    const pplStems = ['anthonny01','fred02','fred03','fred04','guitar_friends','JBC_vendor','spm_nostalgia','with_lilbro'];
+
+    function photoCards(stems, folder, titleFn) {
+        return stems.map(s => ({ src: `assets/photography/${folder}/${s}.jpg`, title: titleFn(s) }));
+    }
+    const photoData = [
+        ...photoCards(catStems, 'cats', catTitle),
+        ...photoCards(envStems, 'environment', titleFromStem),
+        ...photoCards(pplStems, 'people', titleFromStem),
+    ];
+
+    // Music — all solely by JavanMyna, made via Jummbox/Beepbox (Task 1&2, 8).
+    const musicGroups = [
+        { name:'Personal Favourites', note:'Jummbox / Beepbox', tracks:[
+            { title:'Lifeline', meta:'Composition', src:'assets/music/lifeline.mp3' },
+            { title:'P(Xr), nCrP^nQ^n-r, PQ1', meta:'Composition', src:'assets/music/P(Xr),%20nCrP%5EnQ%5En-r,%20PQ1.mp3' },
+            { title:'Fy, IbnG', meta:'Composition', src:'assets/music/Fy,IbnG.mp3' },
+            { title:'L&M', meta:'Composition', src:'assets/music/l&amp;m.mp3' },
+        ]},
+        { name:'Mis1nf0 OST', note:'Jummbox / Beepbox', tracks:[
+            { title:'Dazed', meta:'Soundtrack', src:'assets/music/dazed.mp3' },
+            { title:'dfordustbin', meta:'Soundtrack', src:'assets/music/dfordustbin.mp3' },
+        ]},
+        { name:'Birthday Gifts', note:'Jummbox / Beepbox', tracks:[
+            { title:'Deadpool Bag 2', meta:'Composition', src:'assets/music/deadpool_bag2.mp3' },
+            { title:'Lyna', meta:'Composition', src:'assets/music/lyna.mp3' },
+            { title:'Manyafication', meta:'Composition', src:'assets/music/manyafication.mp3' },
+        ]},
+    ];
+
+    function renderArt() {
+        const track = document.querySelector('#art .fa-track');
+        if (!track) return;
+        track.innerHTML = artData.map(a => `
+            <article class="fa-card fa-trigger" tabindex="0"
+                     data-title="${esc(a.t)}" data-medium="${esc(a.med)}"
+                     data-date="${esc(a.date || '')}" data-desc="${esc(a.desc || '')}">
+                <img src="assets/art/${esc(a.f)}" alt="${esc(a.t)}" loading="lazy">
+                <div class="fa-card-body">
+                    <h3>${esc(a.t)}</h3>
+                    <p class="fa-card-meta">${esc(a.med)}${a.date ? ` · ${esc(a.date)}` : ''}</p>
+                </div>
+            </article>`).join('');
+    }
+
+    function renderPhotography() {
+        const track = document.querySelector('#photography .fa-track');
+        if (!track) return;
+        track.innerHTML = photoData.map(p => `
+            <article class="fa-card fa-trigger" tabindex="0"
+                     data-title="${esc(p.title)}" data-medium="Photograph" data-date="" data-desc="">
+                <img src="${esc(p.src)}" alt="${esc(p.title)}" loading="lazy">
+                <div class="fa-card-body">
+                    <h3>${esc(p.title)}</h3>
+                    <p class="fa-card-meta">Photograph</p>
+                </div>
+            </article>`).join('');
+    }
+
+    function renderMusic() {
+        const wrap = document.querySelector('#music .music-groups');
+        if (!wrap) return;
+        wrap.innerHTML = musicGroups.map(g => `
+            <div class="music-group">
+                <h3>${esc(g.name)} <span class="group-note">(${esc(g.note)})</span></h3>
+                <ul class="track-list">
+                    ${g.tracks.map(t => `
+                        <li class="track">
+                            <div class="track-info">
+                                <span class="track-title">${esc(t.title)}</span>
+                                <span class="track-meta">${esc(t.meta)}</span>
+                            </div>
+                            <audio controls preload="none" src="${t.src}"></audio>
+                        </li>`).join('')}
+                </ul>
+            </div>`).join('');
+    }
+
+    renderArt();
+    renderPhotography();
+    renderMusic();
+
+    /* ----------------------------------------------- */
     /* Section focus: set body[data-focus] so the CSS  */
     /* vignette recolours as the user moves through the */
     /* page. Driven by nav clicks (best V1 signal).     */
@@ -134,6 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const desc   = trigger.dataset.desc   || '';
         const gh     = trigger.dataset.github || '';
         const live   = trigger.dataset.live   || '';
+        const prog   = trigger.dataset.progress || '';
 
         // Image: gallery cards have an <img>; project cards don't.
         const img = trigger.querySelector('img');
@@ -152,8 +298,8 @@ document.addEventListener('DOMContentLoaded', () => {
         plaqueDate.textContent  = date ? `· ${date}` : '';
         plaqueDesc.textContent  = desc;
 
-        // Project links (gallery cards have neither).
-        if (gh || live) {
+        // Project links (gallery cards have none).
+        if (gh || live || prog) {
             plaqueLinks.hidden = false;
             plaqueLinks.innerHTML = '';
             if (live) {
@@ -163,6 +309,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (gh) {
                 plaqueLinks.innerHTML +=
                     `<a href="${gh}" target="_blank" rel="noopener"><span class="label">Code:</span>GitHub repo</a>`;
+            }
+            if (prog) {
+                plaqueLinks.innerHTML +=
+                    `<a href="${prog}" target="_blank" rel="noopener"><span class="label">Progress:</span>dev log</a>`;
             }
         } else {
             plaqueLinks.hidden = true;
