@@ -4,8 +4,339 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fred's Archive</title>
+    <meta name="description" content="A personal digital archive collecting Fred's art, photography, music, and code in one place.">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    
+<body data-focus="hub">
+    <a href="#main-content" class="fa-skip-link">Skip to main content</a>
+
+    <!-- ============================================= -->
+    <!-- HUB / LANDING TITLE                            -->
+    <!-- The credits-room entrance. Keep it sparse so  -->
+    <!-- the title itself feels like a doorway rather  -->
+    <!-- than a banner ad.                             -->
+    <!-- ============================================= -->
+    <header class="hub" id="hub">
+        <h1 class="hub-title">Fred's Archive</h1>
+        <p class="hub-tagline">A collection of things I've created.</p>
+    </header>
+
+    <!-- Sticky nav — same role as JBC's .shortcut-nav. -->
+    <nav class="fa-nav" aria-label="Section navigation">
+        <ul>
+            <li><a href="#about">About me</a></li>
+            <li><a href="#art">Art work</a></li>
+            <li><a href="#photography">Photography</a></li>
+            <li><a href="#music">Music</a></li>
+            <li><a href="#projects">Projects</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+
+        <!-- =================================== -->
+        <!-- ABOUT ME                            -->
+        <!-- =================================== -->
+        <section id="about" class="section" data-section="about">
+            <div class="container">
+                <h2 class="section-title">About me</h2>
+                <div class="about-block">
+                    <div class="about-photo">
+                        <!-- TODO: drop a real portrait at assets/art/bio.jpg — none exists yet.
+                             The <img> will fail silently and the placeholder div shows instead. -->
+                        <img src="assets/art/bio.jpg" alt="Photo of Fred" class="bio-photo"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="bio-photo-placeholder" aria-hidden="true">[ TODO: bio photo ]</div>
+                    </div>
+                    <div class="about-text">
+                        <p>Hi, I'm Fred, I make things.</p>
+                        <p>This archive is where I collect them in one place — drawings, photos, music, and code — instead of leaving them scattered across folders and platforms.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================== -->
+        <!-- ART WORK                            -->
+        <!-- Adapted from JBC slider: one card   -->
+        <!-- per piece. Single piece for now.    -->
+        <!-- =================================== -->
+        <section id="art" class="section" data-section="art">
+            <div class="container">
+                <h2 class="section-title">Art work</h2>
+                <p class="section-lead">Drawings and visual creations. Click a piece to read its placard.</p>
+
+                <div class="fa-slider-wrapper">
+                    <div class="fa-slider">
+                        <button type="button" class="fa-slider-btn fa-prev" data-dir="-1" aria-label="Previous artwork">&lt;</button>
+
+                        <div class="fa-slider-viewport">
+                            <div class="fa-track">
+                                <article class="fa-card fa-trigger" tabindex="0"
+                                         data-title="Antformicidae"
+                                         data-medium="Digital drawing"
+                                         data-date="2024"
+                                         data-desc="An ant-inspired creature study.">
+                                    <img src="assets/art/antformicidae.jpg"
+                                         alt="Antformicidae — ant-inspired creature illustration"
+                                         loading="lazy">
+                                    <div class="fa-card-body">
+                                        <h3>Antformicidae</h3>
+                                        <p class="fa-card-meta">Digital drawing · 2024</p>
+                                    </div>
+                                </article>
+                                <!-- TODO: add more artwork cards under assets/art/ as you make them. -->
+                            </div>
+                        </div>
+
+                        <button type="button" class="fa-slider-btn fa-next" data-dir="1" aria-label="Next artwork">&gt;</button>
+                    </div>
+                    <div class="fa-dots" aria-hidden="true"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================== -->
+        <!-- PHOTOGRAPHY                         -->
+        <!-- Same slider pattern as Art so the   -->
+        <!-- two galleries read as siblings.      -->
+        <!-- =================================== -->
+        <section id="photography" class="section" data-section="photography">
+            <div class="container">
+                <h2 class="section-title">Photography</h2>
+                <p class="section-lead">Captured moments. Click a frame to read its placard.</p>
+
+                <div class="fa-slider-wrapper">
+                    <div class="fa-slider">
+                        <button type="button" class="fa-slider-btn fa-prev" data-dir="-1" aria-label="Previous photo">&lt;</button>
+
+                        <div class="fa-slider-viewport">
+                            <div class="fa-track">
+                                <article class="fa-card fa-trigger" tabindex="0"
+                                         data-title="Miko 01"
+                                         data-medium="Photograph"
+                                         data-date=""
+                                         data-desc="">
+                                    <img src="assets/photography/miko01.jpg" alt="Miko 01" loading="lazy">
+                                    <div class="fa-card-body">
+                                        <h3>Miko 01</h3>
+                                        <p class="fa-card-meta">Photograph</p>
+                                    </div>
+                                </article>
+
+                                <article class="fa-card fa-trigger" tabindex="0"
+                                         data-title="Miko 02"
+                                         data-medium="Photograph"
+                                         data-date=""
+                                         data-desc="">
+                                    <img src="assets/photography/miko02.jpg" alt="Miko 02" loading="lazy">
+                                    <div class="fa-card-body">
+                                        <h3>Miko 02</h3>
+                                        <p class="fa-card-meta">Photograph</p>
+                                    </div>
+                                </article>
+
+                                <article class="fa-card fa-trigger" tabindex="0"
+                                         data-title="MM"
+                                         data-medium="Photograph"
+                                         data-date=""
+                                         data-desc="">
+                                    <img src="assets/photography/mm.jpg" alt="MM" loading="lazy">
+                                    <div class="fa-card-body">
+                                        <h3>MM</h3>
+                                        <p class="fa-card-meta">Photograph</p>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+
+                        <button type="button" class="fa-slider-btn fa-next" data-dir="1" aria-label="Next photo">&gt;</button>
+                    </div>
+                    <div class="fa-dots" aria-hidden="true"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================== -->
+        <!-- MUSIC                               -->
+        <!-- Credited under composer name        -->
+        <!-- JavanMyna — used as byline, not a   -->
+        <!-- band name.                          -->
+        <!-- =================================== -->
+        <section id="music" class="section" data-section="music">
+            <div class="container">
+                <h2 class="section-title">Music</h2>
+                <p class="section-lead">Original work under the name <strong>JavanMyna</strong>. Play a track below.</p>
+
+                <!-- TODO: the three groupings below are my best guess from filenames —
+                     please confirm which track belongs in which group, and confirm
+                     the collaborator / SFX credit names marked [TODO]. -->
+
+                <div class="music-group">
+                    <h3>Compositions <span class="group-note">(MuseScore)</span></h3>
+                    <ul class="track-list">
+                        <li class="track">
+                            <div class="track-info">
+                                <span class="track-title">P(Xr), nCrP^nQ^n-r, PQ1</span>
+                                <span class="track-meta">Composition</span>
+                            </div>
+                            <!-- Spaces and the caret in this filename are URL-encoded (%20, %5E).
+                                 If the player fails to load, the file may need renaming. -->
+                            <audio controls preload="none"
+                                   src="assets/music/P(Xr),%20nCrP%5EnQ%5En-r,%20PQ1.mp3"></audio>
+                        </li>
+                        <li class="track">
+                            <div class="track-info">
+                                <span class="track-title">Lifeline</span>
+                                <span class="track-meta">Composition</span>
+                            </div>
+                            <audio controls preload="none" src="assets/music/lifeline.mp3"></audio>
+                        </li>
+                        <li class="track">
+                            <div class="track-info">
+                                <span class="track-title">Manyafication</span>
+                                <span class="track-meta">Composition</span>
+                            </div>
+                            <audio controls preload="none" src="assets/music/manyafication.mp3"></audio>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="music-group">
+                    <h3>Beats &amp; production <span class="group-note">(FL Studio)</span></h3>
+                    <ul class="track-list">
+                        <li class="track">
+                            <div class="track-info">
+                                <span class="track-title">Dazed</span>
+                                <span class="track-meta">Beat</span>
+                            </div>
+                            <audio controls preload="none" src="assets/music/dazed.mp3"></audio>
+                        </li>
+                        <li class="track">
+                            <div class="track-info">
+                                <span class="track-title">Deadpool Bag 2</span>
+                                <span class="track-meta">Beat</span>
+                            </div>
+                            <audio controls preload="none" src="assets/music/deadpool_bag2.mp3"></audio>
+                        </li>
+                        <li class="track">
+                            <div class="track-info">
+                                <span class="track-title">D for Dustbin</span>
+                                <span class="track-meta">Beat</span>
+                            </div>
+                            <audio controls preload="none" src="assets/music/dfordustbin.mp3"></audio>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="music-group">
+                    <h3>Favorites, collabs &amp; SFX <span class="group-note">(lofi / credits)</span></h3>
+                    <ul class="track-list">
+                        <li class="track">
+                            <div class="track-info">
+                                <span class="track-title">Fy, IbnG</span>
+                                <span class="track-meta">[TODO: confirm credit — collaborator or lofi pick?]</span>
+                            </div>
+                            <audio controls preload="none" src="assets/music/Fy,IbnG.mp3"></audio>
+                        </li>
+                        <li class="track">
+                            <div class="track-info">
+                                <span class="track-title">L&amp;M</span>
+                                <span class="track-meta">[TODO: confirm credit — collaborator or SFX?]</span>
+                            </div>
+                            <audio controls preload="none" src="assets/music/l&amp;m.mp3"></audio>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================== -->
+        <!-- PROJECTS                            -->
+        <!-- Each card opens a plaque with GH +   -->
+        <!-- live links pulled from the README.   -->
+        <!-- =================================== -->
+        <section id="projects" class="section" data-section="projects">
+            <div class="container">
+                <h2 class="section-title">Projects</h2>
+                <p class="section-lead">Code things I've shipped. Click a card for links.</p>
+
+                <div class="project-grid">
+                    <article class="project-card fa-trigger" tabindex="0"
+                             data-title="Jess Boubie Craft website"
+                             data-medium="Static site (HTML/CSS/JS)"
+                             data-date=""
+                             data-desc="A handcrafted-brass jewellery catalogue site for Jess Boubie Craft, built as a static site. This is the project whose carousel + lightbox pattern Fred's Archive adapts for its own galleries."
+                             data-github="https://github.com/JavanMyna/jess-boubie-craft"
+                             data-live="https://jessboubiecraft.netlify.app/">
+                        <h3>Jess Boubie Craft website</h3>
+                        <p class="project-type">Static site · HTML / CSS / JS</p>
+                        <p class="project-links-hint">GitHub + live link</p>
+                    </article>
+
+                    <article class="project-card fa-trigger" tabindex="0"
+                             data-title="7 Days of DoF"
+                             data-medium="Python game"
+                             data-date=""
+                             data-desc="A Python game. Fred notes it was shelved long ago and he hopes to rebuild it to be playable in the browser one day — that's a future problem."
+                             data-github="https://github.com/JavanMyna/7-days-of-DoF"
+                             data-live="">
+                        <h3>7 Days of DoF</h3>
+                        <p class="project-type">Python game</p>
+                        <p class="project-links-hint">GitHub link</p>
+                    </article>
+
+                    <article class="project-card fa-trigger" tabindex="0"
+                             data-title="Matrics 25/26 PSPM Analysis"
+                             data-medium="Data analysis"
+                             data-date=""
+                             data-desc="A data-analysis site for Matrics 25/26 PSPM results. Fred notes it currently looks broken on phone — a known issue this archive's mobile-first approach is meant to avoid repeating."
+                             data-github=""
+                             data-live="https://kml-2526-analysis.netlify.app/">
+                        <h3>Matrics 25/26 PSPM Analysis</h3>
+                        <p class="project-type">Data analysis</p>
+                        <p class="project-links-hint">Live link only
+                            <!-- TODO: GitHub URL is blank in README — supply repo link when ready. -->
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p class="footer-version">Fred's Archive · V1 · in development</p>
+        <p class="footer-credit">Created by Fred</p>
+    </footer>
+
+    <!-- ============================================= -->
+    <!-- PLAQUE OVERLAY                                  -->
+    <!-- The museum placard. Built using the SAME a11y  -->
+    <!-- mechanics as JBC's lightbox: aria-modal, inert -->
+    <!-- on everything else, Tab-trap, Escape, focus     -->
+    <!-- restore. Contains the big image (for gallery    -->
+    <!-- items) or links (for projects).                 -->
+    <!-- ============================================= -->
+    <div id="plaque" class="fa-plaque fa-hidden" role="dialog" aria-modal="true" aria-labelledby="plaque-title">
+        <button type="button" class="fa-plaque-close" aria-label="Close placard">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+                <line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="20" y1="4" x2="4" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <div class="fa-plaque-card">
+            <img id="plaque-img" class="fa-plaque-img" src="" alt="" hidden>
+            <div class="fa-plaque-text">
+                <p id="plaque-medium" class="fa-plaque-medium"></p>
+                <h3 id="plaque-title" class="fa-plaque-title"></h3>
+                <p id="plaque-date" class="fa-plaque-date"></p>
+                <p id="plaque-desc" class="fa-plaque-desc"></p>
+                <div id="plaque-links" class="fa-plaque-links" hidden></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

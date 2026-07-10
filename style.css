@@ -1,0 +1,579 @@
+/* =================================================== */
+/* Fred's Archive — style.css                           */
+/* Mobile-first. Sections carry their own background    */
+/* palette so scrolling through the page already feels   */
+/* like walking between rooms; opening a placard tints   */
+/* the whole viewport to the active section's accent     */
+/* (body[data-focus]) so the "background shifts" cue     */
+/* the prompt asked for is driven by CSS, not a lib.    */
+/* =================================================== */
+
+/* --------------------------------------------------- */
+/* 1. ROOT PALETTE & TOKENS                             */
+/* --------------------------------------------------- */
+:root {
+    /* Base surfaces — dark museum interior */
+    --fa-bg: #14121a;
+    --fa-surface: #1c1a25;
+    --fa-surface-2: #25222f;
+    --fa-text: #e7e3f0;
+    --fa-text-muted: #a39fb2;
+    --fa-border: rgba(255,255,255,0.08);
+
+    /* Per-section accents. Each section sets more below, but these are
+       the defaults the body[data-focus] vignette reads from. */
+    --accent-hub:   #6b6480;
+    --accent-about: #c08a5e;
+    --accent-art:   #b1416a;
+    --accent-photo: #2f8f9b;
+    --accent-music: #6f5fd1;
+    --accent-projects: #5e9c7a;
+
+    /* Slider tokens — same idea as JBC's --cards-per-view */
+    --fa-cards-per-view: 3;
+    --fa-card-gap: 1.25rem;
+
+    /* Type scale */
+    --text-2xl: 2.25rem;
+    --text-xl:  1.5rem;
+    --text-lg:  1.2rem;
+    --text-md:  1rem;
+    --text-sm:  0.875rem;
+
+    --radius: 10px;
+}
+
+/* --------------------------------------------------- */
+/* 2. RESET & BASE                                      */
+/* --------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+img { max-width: 100%; display: block; }
+
+body {
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    line-height: 1.6;
+    color: var(--fa-text);
+    background-color: var(--fa-bg);
+    overflow-x: hidden;
+    /* Smoothly cross-fade the background tint when data-focus changes. */
+    transition: background-color 0.6s ease;
+    min-height: 100vh;
+}
+
+/* A fixed vignette behind everything that recolours per active section.
+   This is the "background shifts when you click an item" mechanic. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 30%, var(--focus-glow, transparent) 0%, transparent 55%);
+    opacity: 0.5;
+    transition: background 0.6s ease;
+}
+body[data-focus="hub"]      { --focus-glow: rgba(107,100,128,0.30); }
+body[data-focus="about"]    { --focus-glow: rgba(192,138,94,0.32); }
+body[data-focus="art"]      { --focus-glow: rgba(177,65,106,0.34); }
+body[data-focus="photography"] { --focus-glow: rgba(47,143,155,0.34); }
+body[data-focus="music"]    { --focus-glow: rgba(111,95,209,0.34); }
+body[data-focus="projects"] { --focus-glow: rgba(94,156,122,0.34); }
+
+/* Skip link — same pattern as JBC, first tab stop */
+.fa-skip-link {
+    position: absolute;
+    top: -3rem;
+    left: 0;
+    background: var(--fa-surface-2);
+    color: var(--fa-text);
+    padding: 0.75rem 1.25rem;
+    z-index: 1001;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 0 0 8px 0;
+    transition: top 0.2s;
+}
+.fa-skip-link:focus { top: 0; }
+
+/* --------------------------------------------------- */
+/* 3. HUB HEADER                                        */
+/* --------------------------------------------------- */
+.hub {
+    text-align: center;
+    padding: 5rem 1rem 4rem;
+}
+.hub-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+.hub-tagline {
+    margin-top: 0.5rem;
+    color: var(--fa-text-muted);
+    font-size: var(--text-lg);
+    font-style: italic;
+}
+
+/* --------------------------------------------------- */
+/* 4. NAV                                               */
+/* --------------------------------------------------- */
+.fa-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(20,18,26,0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--fa-border);
+}
+.fa-nav ul {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0 0.5rem;
+    max-width: 960px;
+    margin: 0 auto;
+}
+.fa-nav a {
+    display: block;
+    padding: 0.9rem 0.85rem;
+    color: var(--fa-text);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--text-md);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.fa-nav a:hover,
+.fa-nav a:focus-visible {
+    color: var(--fa-text);
+    border-color: var(--accent-about);
+    outline: none;
+}
+.fa-nav a:focus-visible {
+    outline: 2px solid var(--fa-text);
+    outline-offset: -4px;
+}
+
+section { scroll-margin-top: 4rem; } /* clear the sticky nav on hash jump */
+
+/* --------------------------------------------------- */
+/* 5. LAYOUT PRIMITIVES                                 */
+/* --------------------------------------------------- */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+}
+.section { padding: 3.5rem 0; }
+.section-title {
+    font-size: var(--text-xl);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+.section-lead {
+    color: var(--fa-text-muted);
+    font-size: var(--text-md);
+    margin-bottom: 1.75rem;
+    max-width: 60ch;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Per-section background tints: the rooms you walk through. */
+.section[data-section="about"]       { background: linear-gradient(180deg, rgba(192,138,94,0.05), transparent); }
+.section[data-section="art"]         { background: linear-gradient(180deg, rgba(177,65,106,0.06), transparent); }
+.section[data-section="photography"] { background: linear-gradient(180deg, rgba(47,143,155,0.06), transparent); }
+.section[data-section="music"]        { background: linear-gradient(180deg, rgba(111,95,209,0.06), transparent); }
+.section[data-section="projects"]     { background: linear-gradient(180deg, rgba(94,156,122,0.06), transparent); }
+
+/* --------------------------------------------------- */
+/* 6. ABOUT                                             */
+/* --------------------------------------------------- */
+.about-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+.about-photo { width: 100%; max-width: 280px; }
+.bio-photo {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--fa-border);
+}
+.bio-photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    background: var(--fa-surface);
+    color: var(--fa-text-muted);
+    border: 1px dashed var(--fa-border);
+    border-radius: var(--radius);
+    text-align: center;
+    padding: 1rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--text-sm);
+}
+.about-text {
+    font-size: var(--text-lg);
+    max-width: 55ch;
+}
+.about-text p + p { margin-top: 0.75rem; color: var(--fa-text-muted); }
+
+@media (min-width: 720px) {
+    .about-block { flex-direction: row; align-items: flex-start; }
+    .about-photo { flex: 0 0 260px; max-width: 260px; }
+    .about-text  { flex: 1 1 auto; }
+}
+
+/* --------------------------------------------------- */
+/* 7. CAROUSEL — adapted from JBC slider                */
+/* JBC classes renamed to fa- to avoid collisions:      */
+/*   .product-grid -> .fa-track                         */
+/*   .product-card -> .fa-card                          */
+/*   .slider / slider-* -> .fa-slider / fa-slider-*     */
+/*   .dots/.dot -> .fa-dots/.fa-dot                     */
+/* The structural math is the same: track translateX    */
+/* by (cardWidth + gap) per index, clamped to           */
+/* totalCards - cardsPerView.                           */
+/* --------------------------------------------------- */
+.fa-slider-wrapper { margin-top: 1.5rem; }
+.fa-slider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+}
+.fa-slider-viewport {
+    overflow: hidden;
+    flex: 1;
+}
+.fa-track {
+    display: flex;
+    gap: var(--fa-card-gap);
+    transition: transform 0.4s ease;
+    /* transform is GPU-friendly; avoid layout thrash like JBC. */
+}
+.fa-card {
+    flex: 0 0 calc((100% - (var(--fa-cards-per-view) - 1) * var(--fa-card-gap)) / var(--fa-cards-per-view));
+    min-width: 0;
+    background: var(--fa-surface);
+    border: 1px solid var(--fa-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.fa-card:hover,
+.fa-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    outline: none;
+}
+.fa-card:focus-visible {
+    outline: 2px solid var(--fa-text);
+    outline-offset: 2px;
+}
+.fa-card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    aspect-ratio: 4 / 3;
+    display: block;
+}
+.fa-card-body { padding: 0.75rem 1rem 1rem; }
+.fa-card-body h3 { font-size: var(--text-md); font-weight: 700; }
+.fa-card-meta {
+    font-size: var(--text-sm);
+    color: var(--fa-text-muted);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin-top: 0.15rem;
+}
+
+/* Slider buttons — JBC's 48px target kept. */
+.fa-slider-btn {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid var(--fa-border);
+    background: var(--fa-surface-2);
+    color: var(--fa-text);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+.fa-slider-btn:hover:not(:disabled) { background: var(--fa-surface); }
+.fa-slider-btn:active:not(:disabled) { transform: scale(0.95); }
+.fa-slider-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+/* Dots */
+.fa-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.fa-dot {
+    border: none;
+    padding: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+.fa-dot.active { background: var(--fa-text); transform: scale(1.2); }
+
+/* --------------------------------------------------- */
+/* 8. MUSIC                                             */
+/* --------------------------------------------------- */
+.music-group { margin-top: 2rem; }
+.music-group h3 {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+.group-note {
+    color: var(--fa-text-muted);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    font-style: italic;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.track-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+.track {
+    background: var(--fa-surface);
+    border: 1px solid var(--fa-border);
+    border-radius: var(--radius);
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.track-info { display: flex; flex-direction: column; }
+.track-title { font-weight: 700; }
+.track-meta {
+    font-size: var(--text-sm);
+    color: var(--fa-text-muted);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.track audio { width: 100%; }
+
+@media (min-width: 640px) {
+    .track { flex-direction: row; align-items: center; justify-content: space-between; }
+    .track-info { flex: 1 1 auto; }
+    .track audio { flex: 0 1 60%; max-width: 380px; }
+}
+
+/* --------------------------------------------------- */
+/* 9. PROJECTS                                          */
+/* --------------------------------------------------- */
+.project-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+}
+.project-card {
+    background: var(--fa-surface);
+    border: 1px solid var(--fa-border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.25rem 1rem;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.project-card:hover,
+.project-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    outline: none;
+}
+.project-card:focus-visible { outline: 2px solid var(--fa-text); outline-offset: 2px; }
+.project-card h3 { font-size: var(--text-lg); font-weight: 700; }
+.project-type {
+    color: var(--fa-text-muted);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--text-sm);
+    margin-top: 0.25rem;
+}
+.project-links-hint {
+    margin-top: 0.6rem;
+    font-size: var(--text-sm);
+    color: var(--fa-text-muted);
+    font-style: italic;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+@media (min-width: 720px) {
+    .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 960px) {
+    .project-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* --------------------------------------------------- */
+/* 10. PLAQUE OVERLAY (adapted from JBC lightbox)        */
+/* Same mechanics:  .hidden toggle, inert on siblings,    */
+/* Tab-trap, Escape, focus return. Plaque differs from   */
+/* lightbox in CONTENT (museum placard) — not in the     */
+/* a11y wiring.                                          */
+/* --------------------------------------------------- */
+.fa-plaque {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.82);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    cursor: zoom-out;
+    overflow-y: auto;
+}
+.fa-plaque.fa-hidden { display: none; }
+
+.fa-plaque-card {
+    background: var(--fa-surface);
+    color: var(--fa-text);
+    border: 1px solid var(--fa-border);
+    border-radius: var(--radius);
+    max-width: 720px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    cursor: default;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+}
+.fa-plaque-img {
+    width: 100%;
+    max-height: 50vh;
+    object-fit: cover;
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+.fa-plaque-text { padding: 1.5rem; }
+.fa-plaque-medium {
+    color: var(--fa-text-muted);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.fa-plaque-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin-top: 0.25rem;
+}
+.fa-plaque-date {
+    color: var(--fa-text-muted);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--text-sm);
+    margin-top: 0.25rem;
+}
+.fa-plaque-desc {
+    margin-top: 0.85rem;
+    line-height: 1.7;
+}
+.fa-plaque-links {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.fa-plaque-links a {
+    display: inline-block;
+    padding: 0.7rem 1.1rem;
+    border-radius: 999px;
+    background: var(--fa-surface-2);
+    color: var(--fa-text);
+    text-decoration: none;
+    font-weight: 600;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    border: 1px solid var(--fa-border);
+    transition: background 0.2s, transform 0.2s;
+}
+.fa-plaque-links a:hover,
+.fa-plaque-links a:focus-visible {
+    background: var(--accent-about);
+    transform: translateY(-2px);
+    outline: none;
+}
+.fa-plaque-links a:focus-visible { outline: 2px solid var(--fa-text); outline-offset: 2px; }
+.fa-plaque-links a span.label {
+    color: var(--fa-text-muted);
+    font-weight: 400;
+    margin-right: 0.5rem;
+}
+
+.fa-plaque-close {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.92);
+    color: #14121a;
+    border: none;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    z-index: 10;
+}
+.fa-plaque-close svg { display: block; }
+.fa-plaque-close:hover { background: #fff; }
+
+/* --------------------------------------------------- */
+/* 11. FOOTER                                           */
+/* --------------------------------------------------- */
+.footer {
+    text-align: center;
+    padding: 2.5rem 1rem 3rem;
+    color: var(--fa-text-muted);
+    border-top: 1px solid var(--fa-border);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--text-sm);
+}
+.footer-version { margin-bottom: 0.25rem; }
+.footer-credit { opacity: 0.8; }
+
+/* --------------------------------------------------- */
+/* 12. REDUCED MOTION                                   */
+/* --------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    .fa-track, body, body::before {
+        transition: none !important;
+    }
+    html { scroll-behavior: auto; }
+    .fa-card:hover, .project-card:hover { transform: none; }
+}
+
+/* --------------------------------------------------- */
+/* 13. MOBILE / TABLET OVERRIDES                         */
+/* Default (mobile-first) is 1 card per view. The      */
+/* breakpoints below widen the track on bigger screens. */
+/* --------------------------------------------------- */
+@media (min-width: 640px) {
+    :root { --fa-cards-per-view: 2; }
+}
+@media (min-width: 960px) {
+    :root { --fa-cards-per-view: 3; }
+    .fa-slider-btn { width: 3rem; height: 3rem; }
+}
