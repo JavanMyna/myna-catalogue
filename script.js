@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Art work — explicit titles/medium. Antformicidae keeps its existing placard detail.
     const artData = [
         { f:'antformicidae.jpg', t:'Antformicidae', med:'Sketches', date:'2025', desc:'Something my best friend said to me that sticked throughout my matrics journey.' },
-        { f:'art_2024sukanDay.jpg', t:'2024 Sukan Day', med:'Sketches' , date:'2024'},
+        { f:'art_2024sukanDay.jpg', t:'Sukan Day', med:'Sketches' , date:'2024'},
         { f:'art_classmate01.jpg', t:'Classmate 01', med:'Sketches' , date:'2024'},
         { f:'art_classmate02.jpg', t:'Classmate 02', med:'Sketches' , date:'2024'},
         { f:'art_kmlcat.jpg', t:'KML Cat', med:'Sketches' , date:'2025', desc:"I seriously feel like everytime I eat in my college cafe, there's always times like this"},
