@@ -50,6 +50,15 @@
 
 html { scroll-behavior: smooth; }
 
+/* Force UA controls (the native <audio> bar among them) to render in the
+   dark colour scheme on every browser that honours color-scheme. This is
+   the broad fix for the "white audio bar on mobile" bug — mobile Safari
+   and mobile Chrome both switch their native media control chrome to dark
+   when this is set, so there is no flash-of-white on load. The targeted
+   ::-webkit-media-controls-panel override below pins the panel background
+   regardless of system preference. */
+html { color-scheme: dark; }
+
 img { max-width: 100%; display: block; }
 
 body {
@@ -117,6 +126,21 @@ body[data-focus="projects"] { --focus-glow: rgba(94,156,122,0.34); }
     font-size: var(--text-lg);
     font-style: italic;
 }
+/* Personal signature wordmark "<." — written with the HTML entity so the
+   raw "<" never breaks the parser. Subtle by default, picks up the hub
+   accent on hover. Decorative (the title already conveys identity), so
+   it's aria-hidden in the markup. */
+.fa-signature {
+    display: inline-block;
+    margin-top: 1.25rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--text-md);
+    letter-spacing: 0.04em;
+    color: var(--fa-text-muted);
+    opacity: 0.55;
+    transition: color 0.25s, opacity 0.25s;
+}
+.fa-signature:hover { color: var(--accent-hub); opacity: 0.9; }
 
 /* --------------------------------------------------- */
 /* 4. NAV                                               */
@@ -319,24 +343,65 @@ section { scroll-margin-top: 4rem; } /* clear the sticky nav on hash jump */
 .fa-slider-btn:active:not(:disabled) { transform: scale(0.95); }
 .fa-slider-btn:disabled { opacity: 0.25; cursor: not-allowed; }
 
-/* Dots */
+/* Page indicator — replaces the one-dot-per-image row that grew to
+   30+ on Photography. Same .fa-dots container so initSlider's DOM hook
+   is unchanged; it now holds a single "current / total" text span. */
 .fa-dots {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 0.5rem;
     margin-top: 1rem;
+    min-height: 1.25rem;
 }
-.fa-dot {
+.fa-page-indicator {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--text-sm);
+    color: var(--fa-text-muted);
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+}
+
+/* --------------------------------------------------- */
+/* 7b. PHOTOGRAPHY CATEGORY FILTER                       */
+/* Tab row above the Photography carousel. Same visual  */
+/* language as the top .fa-nav (pill underline) so it    */
+/* reads as a sibling control instead of a new component. */
+/* --------------------------------------------------- */
+.fa-photo-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    padding: 0 0.5rem;
+    max-width: 960px;
+}
+.fa-filter-btn {
+    appearance: none;
+    -webkit-appearance: none;
     border: none;
-    padding: 0;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.25);
+    background: transparent;
+    color: var(--fa-text-muted);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--text-md);
+    font-weight: 600;
+    padding: 0.55rem 0.95rem;
+    border-bottom: 2px solid transparent;
     cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
+    transition: color 0.2s, border-color 0.2s;
 }
-.fa-dot.active { background: var(--fa-text); transform: scale(1.2); }
+.fa-filter-btn:hover { color: var(--fa-text); }
+.fa-filter-btn:focus-visible {
+    outline: 2px solid var(--fa-text);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+.fa-filter-btn.active {
+    color: var(--fa-text);
+    border-bottom-color: var(--accent-photo);
+}
 
 /* --------------------------------------------------- */
 /* 8. MUSIC                                             */
@@ -378,20 +443,95 @@ section { scroll-margin-top: 4rem; } /* clear the sticky nav on hash jump */
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
+    /* The whole row opens the story card; cue that affordance. */
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
+.track:hover { border-color: rgba(255,255,255,0.22); box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+.track:focus-within { border-color: var(--accent-music); outline: none; }
+.track:focus-visible { outline: 2px solid var(--fa-text); outline-offset: 2px; }
+
 .track-info { display: flex; flex-direction: column; }
 .track-title { font-weight: 700; }
+/* Title-as-link only when the song has a SoundCloud URL. Underline +
+   accent appear on hover, mirroring the .javanmyna-link treatment. */
+.track-title-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.track-title-link:hover,
+.track-title-link:focus-visible {
+    color: var(--accent-music);
+    border-bottom-color: var(--accent-music);
+    outline: none;
+}
+.track-title-link:focus-visible { outline: 2px solid var(--fa-text); outline-offset: 2px; }
+/* No-link variant: deliberately not a link. No underline-on-hover so the
+   absence reads as intentional, not "broken". A muted helper tooltip is
+   set on the element in markup. */
+.track-title-nolink {
+    color: var(--fa-text-muted);
+    border-bottom: 1px dashed transparent;
+}
 .track-meta {
     font-size: var(--text-sm);
     color: var(--fa-text-muted);
     font-family: 'Segoe UI', system-ui, sans-serif;
 }
+
+.track-player { display: flex; flex-direction: column; gap: 0.5rem; }
 .track audio { width: 100%; }
+
+/* Dark native <audio> bar. color-scheme: dark on <html> already nudges
+   mobile Safari/Chrome to render their UA media controls dark; the
+   ::-webkit-media-controls-panel override forces the panel background
+   regardless of system preference, killing the white bar on mobile. */
+audio {
+    width: 100%;
+    color-scheme: dark;
+}
+audio::-webkit-media-controls-panel { background: var(--fa-surface-2); }
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display { color: #e7e3f0; }
+
+/* "Play full track" affordance — appears only when a preview src is set.
+   Clicking swaps the row's <audio> src to the full track (see script.js). */
+.track-full-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    align-self: flex-start;
+    border: 1px solid var(--fa-border);
+    background: transparent;
+    color: var(--fa-text-muted);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--text-sm);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.track-full-btn:hover:not(:disabled) {
+    color: var(--fa-text);
+    border-color: rgba(255,255,255,0.25);
+    background: var(--fa-surface-2);
+}
+.track-full-btn:disabled { opacity: 0.6; cursor: default; }
+/* Quiet inline label for rows with no preview clip set — reads as
+   informational, not as a button. */
+.track-preview-badge {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--text-sm);
+    color: var(--fa-text-muted);
+    opacity: 0.7;
+    font-style: italic;
+}
 
 @media (min-width: 640px) {
     .track { flex-direction: row; align-items: center; justify-content: space-between; }
     .track-info { flex: 1 1 auto; }
-    .track audio { flex: 0 1 60%; max-width: 380px; }
+    .track-player { flex: 0 1 60%; max-width: 420px; }
 }
 
 /* --------------------------------------------------- */

@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fred's Archive</title>
     <meta name="description" content="A personal digital archive collecting Fred's art, photography, music, and code in one place.">
+    <meta name="theme-color" content="#14121a">
+    <link rel="icon" href="favicon/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-focus="hub">
@@ -19,6 +25,7 @@
     <header class="hub" id="hub">
         <h1 class="hub-title">Fred's Archive</h1>
         <p class="hub-tagline">A collection of things I've created.</p>
+        <span class="fa-signature" aria-hidden="true">&lt;.</span>
     </header>
 
     <!-- Sticky nav — same role as JBC's .shortcut-nav. -->
@@ -88,6 +95,13 @@
             <div class="container">
                 <h2 class="section-title">Photography</h2>
                 <p class="section-lead">Captured moments. Click a frame to read its placard.</p>
+
+                <div class="fa-photo-filter" role="tablist" aria-label="Filter photography by category">
+                    <button type="button" class="fa-filter-btn" data-cat="all"    role="tab" aria-selected="true">All</button>
+                    <button type="button" class="fa-filter-btn" data-cat="Cats"  role="tab" aria-selected="false">Cats</button>
+                    <button type="button" class="fa-filter-btn" data-cat="People" role="tab" aria-selected="false">People</button>
+                    <button type="button" class="fa-filter-btn" data-cat="Scenes" role="tab" aria-selected="false">Scenes &amp; Objects</button>
+                </div>
 
                 <div class="fa-slider-wrapper">
                     <div class="fa-slider">
@@ -179,7 +193,7 @@
     </main>
 
     <footer class="footer">
-        <p class="footer-version">Fred's Archive · v1.1 · in development</p>
+        <p class="footer-version">Fred's Archive · v1.2 · in development</p>
         <p class="footer-credit">Created by Fred</p>
     </footer>
 
@@ -210,6 +224,30 @@
         </div>
     </div>
 
+    <!-- ============================================= -->
+    <!-- STORY OVERLAY (Task 6)                          -->
+    <!-- Reuses the plaque overlay's dark-modal scaffolding -->
+    <!-- and the same a11y wiring helpers from script.js. -->
+    <!-- ============================================= -->
+    <div id="fa-story" class="fa-plaque fa-hidden" role="dialog" aria-modal="true" aria-labelledby="fa-story-title">
+        <button type="button" class="fa-plaque-close" aria-label="Close story">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+                <line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="20" y1="4" x2="4" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <div class="fa-plaque-card">
+            <div class="fa-plaque-text fa-story-text">
+                <p id="fa-story-category" class="fa-plaque-medium"></p>
+                <h3 id="fa-story-title" class="fa-plaque-title"></h3>
+                <p id="fa-story-type" class="fa-plaque-date"></p>
+                <p id="fa-story-body" class="fa-plaque-desc"></p>
+                <div id="fa-story-link" class="fa-plaque-links" hidden></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="songs.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
