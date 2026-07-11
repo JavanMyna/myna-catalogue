@@ -107,29 +107,6 @@ The goal is not only to showcase finished work, but also to document growth, lea
 
 Currently in development.
 
-Version: **V0.0**
-
-===========================================
-Here are the projects I have been working on
-
-> JessBoubieCraft website 
-    My github page:
-    https://github.com/JavanMyna/jess-boubie-craft
-    Live website:
-    https://jessboubiecraft.netlify.app/
-
-> 7 Days of DoF
-    github:
-    https://github.com/JavanMyna/7-days-of-DoF
-    // I plan to improve this with the help of AI as I have scrapped a long time ago, I wanted to make it accessible and playable via website. But thats a problem for me to solve in the far future
-
-> Matrics 25/26 PSPM Analysis
-    github:
-
-    Live website:
-    https://kml-2526-analysis.netlify.app/
-    // Definitely need improvements because it looks kinda broken in my phone. Im glad I was able to git push it safely tho, If I were to share it to my classmates, I want to remove the ability to look up people in a separate git repo, though, how do I copy paste the whole file without confusing the git to follow along. 
-    
----
+Version: **V1.3**
 
 Created by Fred
